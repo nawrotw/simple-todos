@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TodoListStory } from "./TodoListStory.tsx";
+import { ActionBarStory } from "./ActionBarStory.tsx";
 import { themeWrapper } from "../../themeWrapper.tsx";
 
 const meta = {
-  title: 'Components/TodoList',
-  component: themeWrapper(TodoListStory),
+  title: 'Components/ActionBar',
+  component: themeWrapper(ActionBarStory),
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof TodoListStory>;
+} satisfies Meta<typeof ActionBarStory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const TodoList: Story = {};
+export const ActionBar: Story = {};

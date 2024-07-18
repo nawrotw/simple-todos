@@ -23,8 +23,8 @@ export const todos: Todo[] = [
     checked: true,
     description: "Call John"
   },
-  ...Array.from(Array(10).keys()).map(i => ({
-    id: 5+i,
+  ...Array.from(Array(0).keys()).map(i => ({
+    id: 5 + i,
     checked: false,
     description: `Item ${i}`
   }) satisfies Todo)
@@ -45,6 +45,10 @@ export const handlers = {
         // console.log(body, params)
         return HttpResponse.json(body);
       }
+    ),
+    http.post(
+      `${BASE_URL}/clear-completed`,
+      () => HttpResponse.json()
     ),
   ],
 

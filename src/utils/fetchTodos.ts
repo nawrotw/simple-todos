@@ -28,3 +28,14 @@ export const updateTodoCheck = async ({ id, checked }: Todo): Promise<Todo> => {
   }
   return await response.json();
 };
+
+export const clearCompleted = async (): Promise<void> => {
+
+  const response = await fetch(BASE_URL + `/clear-completed`, {
+    method: "POST",
+  });
+  if (!response.ok) {
+    throw new Error(`Could not update todos`);
+  }
+  await response.json();
+};

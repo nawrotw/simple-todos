@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AddTodoStory } from "./AddTodoStory.tsx";
+import { themeWrapper } from "../../themeWrapper.tsx";
 
 const meta = {
   title: 'Components/AddTodo',
-  component: AddTodoStory,
+  component: themeWrapper(AddTodoStory),
   parameters: {
     layout: 'centered',
   },
