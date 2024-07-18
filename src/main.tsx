@@ -8,11 +8,24 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { CssBaseline } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { handlers } from "./utils/mocks/handlers.ts";
+import { setupWorker } from "msw/browser";
 
+
+const queryClient = new QueryClient();
+export const worker = setupWorker(...handlers.success);
+worker.start({
+  // This is going to perform unhandled requests
+  // but print no warning whatsoever when they happen.
+  onUnhandledRequest: 'bypass'
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <CssBaseline/>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App/>
+    </QueryClientProvider>
   </React.StrictMode>,
 )

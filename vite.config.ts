@@ -8,6 +8,11 @@ import GithubActionsReporter from 'vitest-github-actions-reporter';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      "^/api/.*": "http://localhost:8080",
+    }
+  },
   test: {
     globals: true,
     environment: "happy-dom",
