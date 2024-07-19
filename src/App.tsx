@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, useRef } from 'react'
 import './App.scss'
 import { styled } from "@mui/material";
 import { AddTodo } from "./components/addTodo/AddTodo.tsx";
@@ -43,6 +43,9 @@ function App() {
 
   const { addTodo, updateChecked, clearCompleted } = useTodosMutation();
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [editId, setEditId] = useState<number>();
+  const [editText, setEditText] = useState<string>("");
 
   const [filter, setFilter] = useState<FilterType>('none');
 
@@ -64,15 +67,44 @@ function App() {
 
   // This is one of the essential piece to have stable reference to toggle function, so ListItem memo will work
   // There are many different ways to handle this ListItem rendering issue.
-  const handleToggle = useCallback((selectedItemId: number, checked: boolean) => {
-    updateChecked({ id: selectedItemId, checked: !checked });
+  const handleToggle = useCallback((todoId: number, checked: boolean) => {
+    updateChecked({ id: todoId, checked: !checked });
   }, [updateChecked]);
+
+  const handleEdit = useCallback((todoId: number, description: string) => {
+    console.log('handleEdit', todoId, description);
+    setEditId(todoId);
+    setEditText(description);
+    inputRef.current?.focus();
+  }, []);
+
+  const handleDelete = useCallback((todoId: number) => {
+    console.log('handleDelete', todoId);
+  }, []);
+
+  const handleSave = (id: number, text: string) => {
+    console.log('handleSave', id, text);
+    // setEditTodo(undefined);
+    setEditId(undefined);
+    setEditText("");
+  };
+  const handleEditTextChange = (text: string) => {
+    console.log('handleEditTextChange', text);
+    setEditText(text);
+  };
 
   return (
     <Root>
       <Title>todos</Title>
-      <AddTodo onAdd={handleAddTodo}/>
-      <TodoList isPending={isPending} todos={filteredTodos} onToggle={handleToggle}/>
+      <AddTodo
+        id={editId}
+        ref={inputRef}
+        text={editText}
+        onAdd={handleAddTodo}
+        onSave={handleSave}
+        onTextChange={handleEditTextChange}
+      />
+      <TodoList isPending={isPending} todos={filteredTodos} onToggle={handleToggle} onEdit={handleEdit} onDelete={handleDelete}/>
       <ActionBar itemsLeftCount={itemsLeftCount} filter={filter} onFilterChange={setFilter} onClear={clearCompleted}/>
     </Root>
   )

@@ -1,16 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTodoCheck, clearCompleted as clearCompletedFn, addTodo } from "./todosApi.ts";
 import { Todo } from "./Todo.ts";
+import { getTodoFromCache, setTodoCache } from "../../utils/reactQueryUtils.ts";
 
 export const useTodosMutation = () => {
   const queryClient = useQueryClient();
+
+  const getTodo = (id: number) => getTodoFromCache(queryClient, id);
+  const setTodo = (todo: Todo) => setTodoCache(queryClient, todo);
 
   const addTodoMutation = useMutation({
     mutationFn: addTodo,
     onMutate: async (newTodo) => {
       await queryClient.cancelQueries({ queryKey: ['todos'] })
       const previousTodos = queryClient.getQueryData(['todos']) as Todo[];
-      queryClient.setQueryData(['todos'], (old: Todo[]) => [...old, newTodo])
+      queryClient.setQueryData(['todos'], (old: Todo[]) => [...old, newTodo]);
 
       // Return a context object with the snapshotted value
       return { previousTodos }
@@ -34,16 +38,9 @@ export const useTodosMutation = () => {
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
 
       // Optimistically update to the new value
-      queryClient.setQueryData<Todo[]>(['todos'], (old) => {
-        if (!old) return;
-        const index = old?.findIndex(todo => todo.id === id);
-        if (index === -1) throw new Error(`Todo {id: ${id} not found. Should not happen!`);
-        const newTodo = {
-          ...old[index],
-          checked: checked
-        }
-        return [...old.slice(0, index), newTodo, ...old.slice(index + 1)];
-      });
+      const previousTodo = getTodo(id);
+      const newTodo = { ...previousTodo, checked: checked }
+      setTodo(newTodo);
     },
     onSettled: () => {
       // Always re-fetch after error or success
@@ -56,15 +53,9 @@ export const useTodosMutation = () => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['todos'] });
 
-      // Optimistically update to the new value
-      queryClient.setQueryData<Todo[]>(['todos'], (old) => {
-        if (!old) return;
-
-        return old.map((todo: Todo) => ({
-          ...todo,
-          checked: false
-        }));
-      });
+      queryClient.setQueryData<Todo[]>(['todos'],
+        (old) => old?.map((todo: Todo) => ({ ...todo, checked: false }))
+      );
     },
     onSettled: () => {
       // Always re-fetch after error or success
@@ -73,11 +64,9 @@ export const useTodosMutation = () => {
 
   })
 
-
   return {
     updateChecked: updateCheckedMutation.mutate,
     clearCompleted: clearCompletedMutate.mutate,
     addTodo: addTodoMutation.mutate
   };
-
 }

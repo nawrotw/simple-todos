@@ -17,14 +17,23 @@ export const LoadingText = styled('div')`
 export interface TodoListProps {
   todos?: Todo[];
   isPending?: boolean;
-  onToggle: (selectedItemId: number, checked: boolean) => void;
+  onToggle: (todoId: number, checked: boolean) => void;
+  onEdit: (todoId: number, description: string) => void;
+  onDelete: (todoId: number) => void;
 }
 
-export const TodoList = ({ todos, onToggle, isPending }: TodoListProps) => {
+export const TodoList = ({ todos, isPending, onToggle, ...restProps }: TodoListProps) => {
 
   return <StyledList>
     {isPending && <LoadingText>Loading...</LoadingText>}
     {todos?.map(({ id, description, checked }) =>
-      <TodoListItem key={id} id={id} text={description} checked={checked} onClick={onToggle}/>)}
+      <TodoListItem
+        key={id}
+        id={id}
+        checked={checked}
+        text={description}
+        {...restProps}
+        onClick={onToggle}
+      />)}
   </StyledList>
 }

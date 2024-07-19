@@ -35,7 +35,7 @@ A todo item has three possible interactions:
 
 1. Clicking the checkbox marks the todo as complete
 
-2. Double-clicking input activates editing mode
+2. Double-clicking input activates editing mode  // discuss this
 
 3. Hovering over the todo shows the remove button
 
