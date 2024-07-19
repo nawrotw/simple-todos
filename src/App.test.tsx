@@ -3,14 +3,14 @@ import { afterAll, beforeAll, describe, expect, it, beforeEach, afterEach } from
 import App from "./App.tsx";
 import { TestApiProvider } from "./components/TestApiProvider.tsx";
 import { setupServer } from 'msw/node'
-import { handlers, resetTodosDB } from "./utils/mocks/handlers.ts";
+import { mockedTodosApi, resetTodosDB } from "./api/todos/mocks/mockedTodosApi.ts";
 import { userEvent, UserEvent } from "@testing-library/user-event";
 
 const getTodoItem = (todoId: number) => (screen.getByTestId(`todoItem-${todoId}`));
 const isTodoChecked = (todoId: number) => (getTodoItem(todoId).querySelector('input') as HTMLInputElement)?.checked;
 
 describe("App", () => {
-  const server = setupServer(...handlers.success);
+  const server = setupServer(...mockedTodosApi.success);
 
   beforeAll(() => server.listen());
   afterAll(() => server.close());

@@ -4,8 +4,8 @@ import { styled } from "@mui/material";
 import { AddTodo } from "./components/addTodo/AddTodo.tsx";
 import { TodoList } from "./components/todoList/TodoList.tsx";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTodos } from "./utils/fetchTodos.ts";
-import { useMutateUpdateTodoChecked, useClearCompleted, useAddTodo } from "./utils/useMutateUpdateTodoChecked.ts";
+import { todosApi } from "./api/todos/todosApi.ts";
+import { useTodosMutation } from "./api/todos/useTodosMutation.ts";
 import { ActionBar, FilterType } from "./components/actionBar/ActionBar.tsx";
 import { colors } from "./styles/colors.ts";
 import { Todo } from "./api/todos/Todo.ts";
@@ -39,10 +39,9 @@ const filterMap: Record<FilterType, (todo: Todo) => boolean> = {
 
 function App() {
 
-  const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => fetchTodos() });
-  const { mutate: updateChecked } = useMutateUpdateTodoChecked();
-  const { mutate: clearCompleted } = useClearCompleted();
-  const { mutate: addTodo } = useAddTodo();
+  const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => todosApi() });
+
+  const { addTodo, updateChecked, clearCompleted } = useTodosMutation();
 
 
   const [filter, setFilter] = useState<FilterType>('none');
@@ -60,13 +59,13 @@ function App() {
   if (error) return 'An error has occurred: ' + error.message;
 
   const handleAddTodo = (description: string) => {
-    addTodo({ description: description });
+    addTodo({ id: -1, description: description, checked: false });
   }
 
   // This is one of the essential piece to have stable reference to toggle function, so ListItem memo will work
   // There are many different ways to handle this ListItem rendering issue.
   const handleToggle = useCallback((selectedItemId: number, checked: boolean) => {
-    updateChecked({ id: selectedItemId, checked, description: 'FIXME' });
+    updateChecked({ id: selectedItemId, checked: !checked });
   }, [updateChecked]);
 
   return (

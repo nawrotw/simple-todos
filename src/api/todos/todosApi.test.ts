@@ -1,8 +1,8 @@
 import { setupServer } from 'msw/node'
 import { beforeAll, describe, expect, it, afterEach, } from 'vitest';
 
-import { handlers } from './mocks/handlers';
-import { fetchTodos } from "./fetchTodos.ts";
+import { mockedTodosApi } from './mocks/mockedTodosApi.ts';
+import { todosApi } from "./todosApi.ts";
 
 const server = setupServer();
 
@@ -16,13 +16,13 @@ describe("fetch todos", () => {
   });
 
   it("should return todos", async () => {
-    server.use(...handlers.success);
-    const todos = await fetchTodos();
+    server.use(...mockedTodosApi.success);
+    const todos = await todosApi();
     expect(todos).toEqual(todos);
   });
 
   it('error?!', async () => {
-    server.use(...handlers.error);
-    expect(() => fetchTodos()).rejects.toMatchObject(new Error(`Could not fetch todos`));
+    server.use(...mockedTodosApi.error);
+    expect(() => todosApi()).rejects.toMatchObject(new Error(`Could not fetch todos`));
   });
 });

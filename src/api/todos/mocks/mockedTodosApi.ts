@@ -1,6 +1,6 @@
 import { http, HttpResponse, } from 'msw';
-import { TODOS_URL } from "../fetchTodos.ts";
-import { Todo } from "../../api/todos/Todo.ts";
+import { TODOS_URL } from "../todosApi.ts";
+import { Todo } from "../Todo.ts";
 
 export const todos: Todo[] = [
   {
@@ -33,7 +33,7 @@ export const todos: Todo[] = [
 let todosDB: Todo[] = [...todos];
 export const resetTodosDB = () => todosDB = [...todos];
 
-export const handlers = {
+export const mockedTodosApi = {
   success: [
     http.get(
       TODOS_URL,
@@ -47,17 +47,26 @@ export const handlers = {
         return HttpResponse.json(newTodo);
       }
     ),
-    http.post( // put
-      `${TODOS_URL}/:id/update-checked`, async ({ request/*, params*/ }) => {
-        // Read the intercepted request body as JSON.
-        const body = await request.json() as Todo;
-        // console.log(body, params)
-        return HttpResponse.json(body);
+    http.put(
+      `${TODOS_URL}/:id/update-checked`, async ({ request, params }) => {
+        const { checked } = await request.json() as { checked: boolean };
+
+        const todoId = parseInt(params.id as string);
+        const index = todosDB.findIndex(todo => todo.id === todoId);
+        if (index === -1) {
+          return new HttpResponse(null, { status: 500, statusText: `Todo Not Found, id: ${todoId}` });
+        }
+        const newTodo = { ...todosDB[index], checked: checked };
+        todosDB = [...todosDB.slice(0, index), newTodo, ...todosDB.slice(index + 1)];
+        return HttpResponse.json();
       }
     ),
-    http.post( // put
+    http.put(
       `${TODOS_URL}/clear-completed`,
-      () => HttpResponse.json()
+      () => {
+        todosDB = todosDB.map(todo => ({ ...todo, checked: false }));
+        return HttpResponse.json();
+      }
     ),
   ],
 

@@ -1,8 +1,8 @@
-import { Todo } from "../api/todos/Todo.ts";
+import { Todo, UpdateTodoCheckedRequest } from "./Todo.ts";
 
 export const TODOS_URL = "api/todos";
 
-export const fetchTodos = async (): Promise<Todo[]> => {
+export const todosApi = async (): Promise<Todo[]> => {
 
   const response = await fetch(TODOS_URL);
 
@@ -29,26 +29,29 @@ export const addTodo = async (newTodo: Partial<Todo>): Promise<Todo> => {
   return await response.json();
 };
 
-export const updateTodoCheck = async ({ id, checked }: Todo): Promise<Todo> => {
+export const updateTodoCheck = async ({ id, checked }: UpdateTodoCheckedRequest): Promise<void> => {
 
   const response = await fetch(TODOS_URL + `/${id}/update-checked`, {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    method: "POST",
-    body: JSON.stringify(checked)
+    method: "PUT",
+    body: JSON.stringify({ checked })
   });
   if (!response.ok) {
     throw new Error(`Could not update todo ${id}`);
   }
-  return await response.json();
 };
 
 export const clearCompleted = async (): Promise<void> => {
 
   const response = await fetch(TODOS_URL + `/clear-completed`, {
-    method: "POST",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    method: "PUT",
   });
   if (!response.ok) {
     throw new Error(`Could not update todos`);

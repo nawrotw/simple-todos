@@ -1,5 +1,5 @@
 import { TodoList } from "../../../components/todoList/TodoList.tsx";
-import { todos } from "../../../utils/mocks/handlers.ts";
+import { todos } from "../../../api/todos/mocks/mockedTodosApi.ts";
 import { useCallback } from "react";
 
 

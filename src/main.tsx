@@ -9,12 +9,12 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { CssBaseline } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { handlers } from "./utils/mocks/handlers.ts";
+import { mockedTodosApi } from "./api/todos/mocks/mockedTodosApi.ts";
 import { setupWorker } from "msw/browser";
 
 
 const queryClient = new QueryClient();
-export const worker = setupWorker(...handlers.success);
+export const worker = setupWorker(...mockedTodosApi.success);
 worker.start({
   // This is going to perform unhandled requests
   // but print no warning whatsoever when they happen.
