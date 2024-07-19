@@ -1,5 +1,5 @@
 import { http, HttpResponse, } from 'msw';
-import { TODOS_URL } from "../todosApi.ts";
+import { TODOS_URL } from "../fetchTodos.ts";
 import { Todo } from "../Todo.ts";
 
 export const todos: Todo[] = [
@@ -33,7 +33,7 @@ export const todos: Todo[] = [
 let todosDB: Todo[] = [...todos];
 export const resetTodosDB = () => todosDB = [...todos];
 
-export const mockedTodosApi = {
+export const todosApiMock = {
   success: [
     http.get(
       TODOS_URL,
@@ -45,6 +45,20 @@ export const mockedTodosApi = {
         newTodo.id = todosDB.length + 1;
         todosDB = [newTodo, ...todosDB];
         return HttpResponse.json(newTodo);
+      }
+    ),
+    http.put(
+      `${TODOS_URL}/:id/text`, async ({ request, params }) => {
+        const { text } = await request.json() as { text: string };
+
+        const todoId = parseInt(params.id as string);
+        const index = todosDB.findIndex(todo => todo.id === todoId);
+        if (index === -1) {
+          return new HttpResponse(null, { status: 500, statusText: `Todo Not Found, id: ${todoId}` });
+        }
+        const newTodo: Todo = { ...todosDB[index], description: text };
+        todosDB = [...todosDB.slice(0, index), newTodo, ...todosDB.slice(index + 1)];
+        return HttpResponse.json();
       }
     ),
     http.put(

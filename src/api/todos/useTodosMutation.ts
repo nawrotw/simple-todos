@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateTodoCheck, clearCompleted as clearCompletedFn, addTodo } from "./todosApi.ts";
+import { updateTodoCheck, clearCompleted as clearCompletedFn, addTodo, updateTodoText } from "./fetchTodos.ts";
 import { Todo } from "./Todo.ts";
 import { getTodoFromCache, setTodoCache } from "../../utils/reactQueryUtils.ts";
 
@@ -24,26 +24,30 @@ export const useTodosMutation = () => {
     onError: (_err, _newTodo, context) => {
       context && queryClient.setQueryData(['todos'], context.previousTodos)
     },
-    // Always re-fetch after error or success:
-    onSettled: () => {
+    onSettled: () => { // Always re-fetch after error or success:
       queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 
+  const updateTextMutation = useMutation({
+    mutationFn: updateTodoText,
+    onMutate: async ({ id, text }) => {
+      await queryClient.cancelQueries({ queryKey: ['todos', id] });
+      setTodo({ ...getTodo(id), description: text });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
 
   const updateCheckedMutation = useMutation({
     mutationFn: updateTodoCheck,
     onMutate: async ({ id, checked }) => {
       // Cancel any outgoing re-fetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
-
-      // Optimistically update to the new value
-      const previousTodo = getTodo(id);
-      const newTodo = { ...previousTodo, checked: checked }
-      setTodo(newTodo);
+      setTodo({ ...getTodo(id), checked: checked });
     },
     onSettled: () => {
-      // Always re-fetch after error or success
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
@@ -58,7 +62,6 @@ export const useTodosMutation = () => {
       );
     },
     onSettled: () => {
-      // Always re-fetch after error or success
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
 
@@ -66,6 +69,7 @@ export const useTodosMutation = () => {
 
   return {
     updateChecked: updateCheckedMutation.mutate,
+    updateText: updateTextMutation.mutate,
     clearCompleted: clearCompletedMutate.mutate,
     addTodo: addTodoMutation.mutate
   };

@@ -3,14 +3,19 @@ import { afterAll, beforeAll, describe, expect, it, beforeEach, afterEach } from
 import App from "./App.tsx";
 import { TestApiProvider } from "./components/TestApiProvider.tsx";
 import { setupServer } from 'msw/node'
-import { mockedTodosApi, resetTodosDB } from "./api/todos/mocks/mockedTodosApi.ts";
+import { todosApiMock, resetTodosDB } from "./api/todos/mocks/todosApiMock.ts";
 import { userEvent, UserEvent } from "@testing-library/user-event";
 
 const getTodoItem = (todoId: number) => (screen.getByTestId(`todoItem-${todoId}`));
 const isTodoChecked = (todoId: number) => (getTodoItem(todoId).querySelector('input') as HTMLInputElement)?.checked;
 
+const waitTodosLoaded = async () => {
+  await screen.findByText('Loading...');
+  await waitForElementToBeRemoved(screen.getByText('Loading...'));
+}
+
 describe("App", () => {
-  const server = setupServer(...mockedTodosApi.success);
+  const server = setupServer(...todosApiMock.success);
 
   beforeAll(() => server.listen());
   afterAll(() => server.close());
@@ -48,6 +53,16 @@ describe("App", () => {
     expect(isTodoChecked(5)).toBeFalsy();
 
     expect(screen.getByTestId('leftItemsCount')).toHaveTextContent('4 items left');
+  });
+
+  it("should update todo text", async () => {
+    await waitTodosLoaded();
+
+    await user.click(screen.getByTestId('editTodoBtn-1'));
+    await user.keyboard(' 2');
+    await user.click(screen.getByText('Save'));
+
+    await screen.findByText('Buy some water 2');
   });
 
   it("should toggle todo", async () => {

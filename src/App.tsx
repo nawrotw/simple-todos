@@ -4,7 +4,7 @@ import { styled } from "@mui/material";
 import { AddTodo } from "./components/addTodo/AddTodo.tsx";
 import { TodoList } from "./components/todoList/TodoList.tsx";
 import { useQuery } from "@tanstack/react-query";
-import { todosApi } from "./api/todos/todosApi.ts";
+import { fetchTodos } from "./api/todos/fetchTodos.ts";
 import { useTodosMutation } from "./api/todos/useTodosMutation.ts";
 import { ActionBar, FilterType } from "./components/actionBar/ActionBar.tsx";
 import { colors } from "./styles/colors.ts";
@@ -39,9 +39,9 @@ const filterMap: Record<FilterType, (todo: Todo) => boolean> = {
 
 function App() {
 
-  const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => todosApi() });
+  const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => fetchTodos() });
 
-  const { addTodo, updateChecked, clearCompleted } = useTodosMutation();
+  const { addTodo, updateChecked, updateText, clearCompleted } = useTodosMutation();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [editId, setEditId] = useState<number>();
@@ -59,10 +59,9 @@ function App() {
     return todos.reduce((count, todo) => todo.checked ? count : count + 1, 0);
   }, [todos]);
 
-  if (error) return 'An error has occurred: ' + error.message;
-
   const handleAddTodo = (description: string) => {
     addTodo({ id: -1, description: description, checked: false });
+    setEditText('');
   }
 
   // This is one of the essential piece to have stable reference to toggle function, so ListItem memo will work
@@ -72,7 +71,6 @@ function App() {
   }, [updateChecked]);
 
   const handleEdit = useCallback((todoId: number, description: string) => {
-    console.log('handleEdit', todoId, description);
     setEditId(todoId);
     setEditText(description);
     inputRef.current?.focus();
@@ -83,15 +81,17 @@ function App() {
   }, []);
 
   const handleSave = (id: number, text: string) => {
-    console.log('handleSave', id, text);
-    // setEditTodo(undefined);
+    updateText({ id, text });
     setEditId(undefined);
     setEditText("");
   };
+
   const handleEditTextChange = (text: string) => {
     console.log('handleEditTextChange', text);
     setEditText(text);
   };
+
+  if (error) return 'An error has occurred: ' + error.message;
 
   return (
     <Root>

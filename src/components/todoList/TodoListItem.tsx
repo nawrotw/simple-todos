@@ -37,6 +37,7 @@ const GenericTodoListItem = <T, >(props: TodoListItemProps<T>) => {
     disablePadding sx={{ borderBottom: '1px solid #CCC' }}
     secondaryAction={<>
       <IconButton
+        data-testid={`editTodoBtn-${id}`}
         edge="end" aria-label="edit" sx={{ mr: 0.5 }}
         onClick={() => onEdit(id, text)}
       >
