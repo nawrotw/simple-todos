@@ -20,7 +20,7 @@ export const todos: Todo[] = [
 const getTodoItem = (todoId: number) => (screen.getByTestId(`todoItem-${todoId}`));
 const isTodoChecked = (todoId: number) => (getTodoItem(todoId).querySelector('input') as HTMLInputElement)?.checked;
 
-describe("Add todo", () => {
+describe("Todo List", () => {
 
   it("should render todos", async () => {
     render(<TodoList todos={todos} onToggle={vi.fn()}/>);

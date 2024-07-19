@@ -10,7 +10,7 @@ export const todos: Todo[] = [
   },
   {
     id: 2,
-    checked: false,
+    checked: true,
     description: "Clean a bike"
   },
   {
@@ -20,7 +20,7 @@ export const todos: Todo[] = [
   },
   {
     id: 4,
-    checked: true,
+    checked: false,
     description: "Call John"
   },
   ...Array.from(Array(0).keys()).map(i => ({

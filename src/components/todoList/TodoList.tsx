@@ -15,8 +15,8 @@ export const LoadingText = styled('div')`
 `;
 
 export interface TodoListProps {
-  isPending: boolean;
   todos?: Todo[];
+  isPending?: boolean;
   onToggle: (selectedItemId: number, checked: boolean) => void;
 }
 
