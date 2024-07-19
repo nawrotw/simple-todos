@@ -39,7 +39,7 @@ export const todosApiMock = {
       TODOS_URL,
       () => HttpResponse.json(todosDB)
     ),
-    http.post( // put
+    http.post( // addTodo
       TODOS_URL, async ({ request }) => {
         const newTodo = await request.json() as Todo;
         newTodo.id = todosDB.length + 1;
@@ -47,7 +47,19 @@ export const todosApiMock = {
         return HttpResponse.json(newTodo);
       }
     ),
-    http.put(
+    http.delete( // deleteTodo
+      `${TODOS_URL}/:id`, async ({ params }) => {
+
+        const todoId = parseInt(params.id as string);
+        const index = todosDB.findIndex(todo => todo.id === todoId);
+        if (index === -1) {
+          return new HttpResponse(null, { status: 500, statusText: `Todo Not Found, id: ${todoId}` });
+        }
+        todosDB = todosDB.filter(todo => todo.id !== todoId);
+        return HttpResponse.json();
+      }
+    ),
+    http.put( // updateText
       `${TODOS_URL}/:id/text`, async ({ request, params }) => {
         const { text } = await request.json() as { text: string };
 
@@ -61,7 +73,7 @@ export const todosApiMock = {
         return HttpResponse.json();
       }
     ),
-    http.put(
+    http.put( // updateChecked
       `${TODOS_URL}/:id/update-checked`, async ({ request, params }) => {
         const { checked } = await request.json() as { checked: boolean };
 

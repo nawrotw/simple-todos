@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateTodoCheck, clearCompleted as clearCompletedFn, addTodo, updateTodoText } from "./fetchTodos.ts";
+import { updateTodoCheck, clearCompleted as clearCompletedFn, addTodo, updateTodoText, deleteTodo } from "./fetchTodos.ts";
 import { Todo } from "./Todo.ts";
 import { getTodoFromCache, setTodoCache } from "../../utils/reactQueryUtils.ts";
 
@@ -28,6 +28,17 @@ export const useTodosMutation = () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
+
+  const deleteTodoMutation = useMutation({
+    mutationFn: deleteTodo,
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['todos', id] });
+      queryClient.setQueryData(['todos'], (old: Todo[]) => old.filter(todo => todo.id !== id));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
 
   const updateTextMutation = useMutation({
     mutationFn: updateTodoText,
@@ -68,9 +79,10 @@ export const useTodosMutation = () => {
   })
 
   return {
+    addTodo: addTodoMutation.mutate,
+    deleteTodo: deleteTodoMutation.mutate,
     updateChecked: updateCheckedMutation.mutate,
     updateText: updateTextMutation.mutate,
     clearCompleted: clearCompletedMutate.mutate,
-    addTodo: addTodoMutation.mutate
   };
 }

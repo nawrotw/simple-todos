@@ -41,7 +41,7 @@ function App() {
 
   const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => fetchTodos() });
 
-  const { addTodo, updateChecked, updateText, clearCompleted } = useTodosMutation();
+  const { addTodo, deleteTodo, updateChecked, updateText, clearCompleted } = useTodosMutation();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [editId, setEditId] = useState<number>();
@@ -77,18 +77,13 @@ function App() {
   }, []);
 
   const handleDelete = useCallback((todoId: number) => {
-    console.log('handleDelete', todoId);
-  }, []);
+    deleteTodo(todoId);
+  }, [deleteTodo]);
 
   const handleSave = (id: number, text: string) => {
     updateText({ id, text });
     setEditId(undefined);
     setEditText("");
-  };
-
-  const handleEditTextChange = (text: string) => {
-    console.log('handleEditTextChange', text);
-    setEditText(text);
   };
 
   if (error) return 'An error has occurred: ' + error.message;
@@ -102,7 +97,7 @@ function App() {
         text={editText}
         onAdd={handleAddTodo}
         onSave={handleSave}
-        onTextChange={handleEditTextChange}
+        onTextChange={setEditText}
       />
       <TodoList isPending={isPending} todos={filteredTodos} onToggle={handleToggle} onEdit={handleEdit} onDelete={handleDelete}/>
       <ActionBar itemsLeftCount={itemsLeftCount} filter={filter} onFilterChange={setFilter} onClear={clearCompleted}/>

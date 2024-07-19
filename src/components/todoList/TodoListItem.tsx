@@ -43,7 +43,10 @@ const GenericTodoListItem = <T, >(props: TodoListItemProps<T>) => {
       >
         <EditIcon/>
       </IconButton>
-      <IconButton edge="end" aria-label="delete" onClick={() => onDelete(id)}>
+      <IconButton
+        data-testid={`deleteTodoBtn-${id}`}
+        edge="end" aria-label="delete"
+        onClick={() => onDelete(id)}>
         <DeleteForeverIcon color='error'/>
       </IconButton>
     </>}

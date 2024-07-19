@@ -55,6 +55,14 @@ describe("App", () => {
     expect(screen.getByTestId('leftItemsCount')).toHaveTextContent('4 items left');
   });
 
+  it("should delete todo", async () => {
+    await waitTodosLoaded();
+
+    await user.click(screen.getByTestId('deleteTodoBtn-1'));
+
+    expect(screen.queryByText('Buy some water')).not.toBeInTheDocument();
+  });
+
   it("should update todo text", async () => {
     await waitTodosLoaded();
 

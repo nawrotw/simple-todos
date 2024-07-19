@@ -4,7 +4,7 @@ export const TODOS_URL = "api/todos";
 
 interface FetchApiProps<Body> {
   url?: string
-  method?: 'GET' | 'POST' | 'PUT',
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE',
   body?: Body
 }
 
@@ -31,9 +31,15 @@ const fetchTodosApi = async <R = void, Body = Record<string, unknown>>(props?: F
 export const fetchTodos = () => fetchTodosApi<Todo[]>();
 
 export const addTodo = (newTodo: Partial<Todo>) =>
-  fetchTodosApi<Todo>({
+  fetchTodosApi({
     method: 'POST',
     body: newTodo
+  });
+
+export const deleteTodo = (id: number) =>
+  fetchTodosApi({
+    url: `/${id}`,
+    method: 'DELETE',
   });
 
 export const updateTodoText = ({ id, text }: UpdateTodoTextRequest) =>
