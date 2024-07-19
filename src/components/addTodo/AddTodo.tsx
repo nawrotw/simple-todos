@@ -10,10 +10,10 @@ export const Form = styled('form')`
 export interface AddTodoProps {
   id?: number;
   text: string;
-  onTextChange: (value: string) => void;
+  onTextChange?: (value: string) => void;
   onTextClear?: () => void;
-  onAdd: (value: string) => void;
-  onSave: (todoId: number, text: string) => void;
+  onAdd?: (value: string) => void;
+  onSave?: (todoId: number, text: string) => void;
 }
 
 export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTodoProps, ref) => {
@@ -22,10 +22,10 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (id) {
-      onSave(id, text);
+      onSave?.(id, text);
       return;
     }
-    onAdd(text);
+    onAdd?.(text);
   }
 
   return <div>
@@ -36,7 +36,7 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
         autoFocus
         autoComplete="off"
         value={text}
-        onChange={e => onTextChange(e.target.value)}
+        onChange={e => onTextChange?.(e.target.value)}
         label="What needs to be done?"
         size='small'
         sx={{ flex: 1, mr: 0 }}

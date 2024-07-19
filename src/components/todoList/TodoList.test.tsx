@@ -23,7 +23,7 @@ const isTodoChecked = (todoId: number) => (getTodoItem(todoId).querySelector('in
 describe("Todo List", () => {
 
   it("should render todos", async () => {
-    render(<TodoList todos={todos} onToggle={vi.fn()}/>);
+    render(<TodoList todos={todos}/>);
 
     expect(screen.getByText('Buy some water')).toBeInTheDocument();
     expect(isTodoChecked(1)).toBeFalsy();

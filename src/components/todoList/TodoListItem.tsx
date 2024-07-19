@@ -18,9 +18,9 @@ export interface TodoListItemProps<T> {
   id: T;
   text: string;
   checked: boolean;
-  onClick: (todoId: T, checked: boolean) => void;
-  onEdit: (todoId: T, text: string) => void;
-  onDelete: (todoId: T) => void;
+  onClick?: (todoId: T, checked: boolean) => void;
+  onEdit?: (todoId: T, text: string) => void;
+  onDelete?: (todoId: T) => void;
 }
 
 const GenericTodoListItem = <T, >(props: TodoListItemProps<T>) => {
@@ -39,21 +39,21 @@ const GenericTodoListItem = <T, >(props: TodoListItemProps<T>) => {
       <IconButton
         data-testid={`editTodoBtn-${id}`}
         edge="end" aria-label="edit" sx={{ mr: 0.5 }}
-        onClick={() => onEdit(id, text)}
+        onClick={() => onEdit?.(id, text)}
       >
         <EditIcon/>
       </IconButton>
       <IconButton
         data-testid={`deleteTodoBtn-${id}`}
         edge="end" aria-label="delete"
-        onClick={() => onDelete(id)}>
+        onClick={() => onDelete?.(id)}>
         <DeleteForeverIcon color='error'/>
       </IconButton>
     </>}
   >
     <ListItemButton
-      onClick={() => onClick(id, checked)} data-testid={`todoItem-${id}`}
-      onDoubleClick={() => onEdit(id, text)}
+      onClick={() => onClick?.(id, checked)} data-testid={`todoItem-${id}`}
+      onDoubleClick={() => onEdit?.(id, text)}
     >
       <ListItemIcon sx={{ minWidth: 0 }}>
         <Checkbox

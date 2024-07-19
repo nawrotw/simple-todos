@@ -17,9 +17,9 @@ export const LoadingText = styled('div')`
 export interface TodoListProps {
   todos?: Todo[];
   isPending?: boolean;
-  onToggle: (todoId: number, checked: boolean) => void;
-  onEdit: (todoId: number, description: string) => void;
-  onDelete: (todoId: number) => void;
+  onToggle?: (todoId: number, checked: boolean) => void;
+  onEdit?: (todoId: number, description: string) => void;
+  onDelete?: (todoId: number) => void;
 }
 
 export const TodoList = ({ todos, isPending, onToggle, ...restProps }: TodoListProps) => {
