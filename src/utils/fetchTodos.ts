@@ -1,10 +1,10 @@
 import { Todo } from "../api/todos/Todo.ts";
 
-export const BASE_URL = "api/todos";
+export const TODOS_URL = "api/todos";
 
 export const fetchTodos = async (): Promise<Todo[]> => {
 
-  const response = await fetch(BASE_URL);
+  const response = await fetch(TODOS_URL);
 
   if (!response.ok) {
     throw new Error(`Could not fetch todos`);
@@ -13,9 +13,25 @@ export const fetchTodos = async (): Promise<Todo[]> => {
   return await response.json();
 };
 
+export const addTodo = async (newTodo: Partial<Todo>): Promise<Todo> => {
+
+  const response = await fetch(TODOS_URL, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    method: "POST",
+    body: JSON.stringify(newTodo)
+  });
+  if (!response.ok) {
+    throw new Error(`Could not add todo`);
+  }
+  return await response.json();
+};
+
 export const updateTodoCheck = async ({ id, checked }: Todo): Promise<Todo> => {
 
-  const response = await fetch(BASE_URL + `/${id}/update-checked`, {
+  const response = await fetch(TODOS_URL + `/${id}/update-checked`, {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -31,7 +47,7 @@ export const updateTodoCheck = async ({ id, checked }: Todo): Promise<Todo> => {
 
 export const clearCompleted = async (): Promise<void> => {
 
-  const response = await fetch(BASE_URL + `/clear-completed`, {
+  const response = await fetch(TODOS_URL + `/clear-completed`, {
     method: "POST",
   });
   if (!response.ok) {

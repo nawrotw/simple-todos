@@ -1,5 +1,5 @@
 import { http, HttpResponse, } from 'msw';
-import { BASE_URL } from "../fetchTodos.ts";
+import { TODOS_URL } from "../fetchTodos.ts";
 import { Todo } from "../../api/todos/Todo.ts";
 
 export const todos: Todo[] = [
@@ -30,31 +30,40 @@ export const todos: Todo[] = [
   }) satisfies Todo)
 ];
 
+let todosDB: Todo[] = [...todos];
+export const resetTodosDB = () => todosDB = [...todos];
+
 export const handlers = {
   success: [
     http.get(
-      BASE_URL,
-      (/*{ request, params, cookies }*/) => {
-        return HttpResponse.json(todos);
+      TODOS_URL,
+      () => HttpResponse.json(todosDB)
+    ),
+    http.post( // put
+      TODOS_URL, async ({ request }) => {
+        const newTodo = await request.json() as Todo;
+        newTodo.id = todosDB.length + 1;
+        todosDB = [newTodo, ...todosDB];
+        return HttpResponse.json(newTodo);
       }
     ),
-    http.post(
-      `${BASE_URL}/:id/update-checked`, async ({ request/*, params*/ }) => {
+    http.post( // put
+      `${TODOS_URL}/:id/update-checked`, async ({ request/*, params*/ }) => {
         // Read the intercepted request body as JSON.
         const body = await request.json() as Todo;
         // console.log(body, params)
         return HttpResponse.json(body);
       }
     ),
-    http.post(
-      `${BASE_URL}/clear-completed`,
+    http.post( // put
+      `${TODOS_URL}/clear-completed`,
       () => HttpResponse.json()
     ),
   ],
 
   error: [
     http.get(
-      BASE_URL,
+      TODOS_URL,
       (/*{ request, params, cookies }*/) => {
         return new HttpResponse(null, { status: 500 });
       }

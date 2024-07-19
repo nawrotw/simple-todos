@@ -1,9 +1,9 @@
 import { render, screen, waitForElementToBeRemoved } from "@testing-library/react";
-import { afterAll, beforeAll, describe, expect, it, beforeEach } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, beforeEach, afterEach } from "vitest";
 import App from "./App.tsx";
 import { TestApiProvider } from "./components/TestApiProvider.tsx";
 import { setupServer } from 'msw/node'
-import { handlers } from "./utils/mocks/handlers.ts";
+import { handlers, resetTodosDB } from "./utils/mocks/handlers.ts";
 import { userEvent, UserEvent } from "@testing-library/user-event";
 
 const getTodoItem = (todoId: number) => (screen.getByTestId(`todoItem-${todoId}`));
@@ -14,6 +14,10 @@ describe("App", () => {
 
   beforeAll(() => server.listen());
   afterAll(() => server.close());
+  afterEach(() => {
+    server.resetHandlers();
+    resetTodosDB();
+  });
 
   let user: UserEvent;
   beforeEach(() => {
@@ -32,6 +36,18 @@ describe("App", () => {
     expect(isTodoChecked(2)).toBeTruthy();
 
     expect(screen.getByText('3 items left')).toBeInTheDocument();
+  });
+
+  it("should add new todo", async () => {
+    await screen.findByText('3 items left'); // await loaded
+
+    await user.keyboard('foo');
+    await user.click(screen.getByText('Add Todo'));
+
+    expect(screen.getByText('foo')).toBeInTheDocument();
+    expect(isTodoChecked(5)).toBeFalsy();
+
+    expect(screen.getByTestId('leftItemsCount')).toHaveTextContent('4 items left');
   });
 
   it("should toggle todo", async () => {

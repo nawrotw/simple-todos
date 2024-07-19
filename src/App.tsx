@@ -5,7 +5,7 @@ import { AddTodo } from "./components/addTodo/AddTodo.tsx";
 import { TodoList } from "./components/todoList/TodoList.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTodos } from "./utils/fetchTodos.ts";
-import { useMutateUpdateTodoChecked, useClearCompleted } from "./utils/useMutateUpdateTodoChecked.ts";
+import { useMutateUpdateTodoChecked, useClearCompleted, useAddTodo } from "./utils/useMutateUpdateTodoChecked.ts";
 import { ActionBar, FilterType } from "./components/actionBar/ActionBar.tsx";
 import { colors } from "./styles/colors.ts";
 import { Todo } from "./api/todos/Todo.ts";
@@ -42,6 +42,7 @@ function App() {
   const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => fetchTodos() });
   const { mutate: updateChecked } = useMutateUpdateTodoChecked();
   const { mutate: clearCompleted } = useClearCompleted();
+  const { mutate: addTodo } = useAddTodo();
 
 
   const [filter, setFilter] = useState<FilterType>('none');
@@ -58,8 +59,8 @@ function App() {
 
   if (error) return 'An error has occurred: ' + error.message;
 
-  const handleAddTodo = (newTodo: string) => {
-    console.log(newTodo)
+  const handleAddTodo = (description: string) => {
+    addTodo({ description: description });
   }
 
   // This is one of the essential piece to have stable reference to toggle function, so ListItem memo will work

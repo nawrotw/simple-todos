@@ -25,6 +25,6 @@ export const TodoList = ({ todos, onToggle, isPending }: TodoListProps) => {
   return <StyledList>
     {isPending && <LoadingText>Loading...</LoadingText>}
     {todos?.map(({ id, description, checked }) =>
-      <TodoListItem key={id} id={id} text={description} checked={checked} onClick={onToggle}/>)}
+      <TodoListItem key={id||-1} id={id} text={description} checked={checked} onClick={onToggle}/>)}
   </StyledList>
 }

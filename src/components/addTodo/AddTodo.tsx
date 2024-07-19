@@ -31,6 +31,7 @@ export const AddTodo = (props: AddTodoProps) => {
       <TextField
         id="newTodo"
         autoFocus
+        autoComplete="off"
         defaultValue={value}
         label="What needs to be done?"
         size='small'

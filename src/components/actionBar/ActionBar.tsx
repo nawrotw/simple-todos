@@ -59,7 +59,7 @@ export const ActionBar = (props: ActionBarProps) => {
   }
 
   return <Root>
-    <LeftContainer>{getItemsLeftText(itemsLeftCount)}</LeftContainer>
+    <LeftContainer data-testid='leftItemsCount'>{getItemsLeftText(itemsLeftCount)}</LeftContainer>
     <MiddleContainer>
       <FilterButton isSelected={filter === 'none'} onClick={handleFilterChange('none')}>All</FilterButton>
       <FilterButton isSelected={filter === 'active'} onClick={handleFilterChange('active')}>Active</FilterButton>
