@@ -86,6 +86,11 @@ function App() {
     setEditText("");
   };
 
+  const handleTextClear = () => {
+    setEditId(undefined);
+    setEditText("");
+  };
+
   if (error) return 'An error has occurred: ' + error.message;
 
   return (
@@ -98,6 +103,7 @@ function App() {
         onAdd={handleAddTodo}
         onSave={handleSave}
         onTextChange={setEditText}
+        onTextClear={handleTextClear}
       />
       <TodoList isPending={isPending} todos={filteredTodos} onToggle={handleToggle} onEdit={handleEdit} onDelete={handleDelete}/>
       <ActionBar itemsLeftCount={itemsLeftCount} filter={filter} onFilterChange={setFilter} onClear={clearCompleted}/>

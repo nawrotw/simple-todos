@@ -11,12 +11,13 @@ export interface AddTodoProps {
   id?: number;
   text: string;
   onTextChange: (value: string) => void;
+  onTextClear?: () => void;
   onAdd: (value: string) => void;
   onSave: (todoId: number, text: string) => void;
 }
 
 export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTodoProps, ref) => {
-  const { id, text, onTextChange, onAdd, onSave } = props;
+  const { id, text, onTextChange, onTextClear, onAdd, onSave } = props;
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,18 +39,19 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
         onChange={e => onTextChange(e.target.value)}
         label="What needs to be done?"
         size='small'
-        sx={{ flex: 1 }}
+        sx={{ flex: 1, mr: 0 }}
         InputProps={{
-          endAdornment: <InputAdornment position="start">
-            <IconButton onClick={() => onTextChange('')}>
-              <ClearIcon/>
+          sx: {pr: 0},
+          endAdornment: onTextClear && <InputAdornment position="start">
+            <IconButton onClick={onTextClear} size='small'>
+              <ClearIcon fontSize='small'/>
             </IconButton>
           </InputAdornment>,
         }}
       />
       <Button
         type="submit"
-        sx={{ marginLeft: '5px' }}
+        sx={{ marginLeft: '5px', width: '20%' }}
         variant='contained'
       >
         {id ? 'Save' : 'Add Todo'}

@@ -14,7 +14,7 @@ const waitTodosLoaded = async () => {
   await waitForElementToBeRemoved(screen.getByText('Loading...'));
 }
 
-describe("App", () => {
+describe("App integration suite", () => {
   const server = setupServer(...todosApiMock.success);
 
   beforeAll(() => server.listen());
