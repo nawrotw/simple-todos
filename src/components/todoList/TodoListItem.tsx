@@ -53,7 +53,6 @@ const GenericTodoListItem = <T, >(props: TodoListItemProps<T>) => {
   >
     <ListItemButton
       onClick={() => onClick?.(id, checked)} data-testid={`todoItem-${id}`}
-      onDoubleClick={() => onEdit?.(id, text)}
     >
       <ListItemIcon sx={{ minWidth: 0 }}>
         <Checkbox
