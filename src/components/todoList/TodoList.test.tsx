@@ -8,12 +8,12 @@ export const todos: Todo[] = [
   {
     id: 1,
     checked: false,
-    description: "Buy some water"
+    text: "Buy some water"
   },
   {
     id: 2,
     checked: true,
-    description: "Clean a bike"
+    text: "Clean a bike"
   }
 ];
 

@@ -18,7 +18,7 @@ export interface TodoListProps {
   todos?: Todo[];
   isPending?: boolean;
   onToggle?: (todoId: number, checked: boolean) => void;
-  onEdit?: (todoId: number, description: string) => void;
+  onEdit?: (todoId: number, text: string) => void;
   onDelete?: (todoId: number) => void;
 }
 
@@ -26,12 +26,12 @@ export const TodoList = ({ todos, isPending, onToggle, ...restProps }: TodoListP
 
   return <StyledList>
     {isPending && <LoadingText>Loading...</LoadingText>}
-    {todos?.map(({ id, description, checked }) =>
+    {todos?.map(({ id, text, checked }) =>
       <TodoListItem
         key={id}
         id={id}
         checked={checked}
-        text={description}
+        text={text}
         {...restProps}
         onClick={onToggle}
       />)}

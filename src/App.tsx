@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useRef } from 'react'
 import './App.scss'
-import { styled } from "@mui/material";
+import { styled, Alert } from "@mui/material";
 import { AddTodo } from "./components/addTodo/AddTodo.tsx";
 import { TodoList } from "./components/todoList/TodoList.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -59,8 +59,8 @@ function App() {
     return todos.reduce((count, todo) => todo.checked ? count : count + 1, 0);
   }, [todos]);
 
-  const handleAddTodo = (description: string) => {
-    addTodo({ id: -1, description: description, checked: false });
+  const handleAddTodo = (text: string) => {
+    addTodo({ id: -1, text, checked: false });
     setEditText('');
   }
 
@@ -70,9 +70,9 @@ function App() {
     updateChecked({ id: todoId, checked: !checked });
   }, [updateChecked]);
 
-  const handleEdit = useCallback((todoId: number, description: string) => {
+  const handleEdit = useCallback((todoId: number, text: string) => {
     setEditId(todoId);
-    setEditText(description);
+    setEditText(text);
     inputRef.current?.focus();
   }, []);
 
@@ -91,10 +91,9 @@ function App() {
     setEditText("");
   };
 
-  if (error) return 'An error has occurred: ' + error.message;
-
   return (
     <Root>
+      {error && <Alert sx={{ m: -1, mb: 1, borderRadius: 0 }} variant="filled" severity="error">{error.message}</Alert>}
       <Title>todos</Title>
       <AddTodo
         id={editId}

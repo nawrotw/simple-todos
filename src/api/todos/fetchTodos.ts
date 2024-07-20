@@ -51,7 +51,7 @@ export const updateTodoText = ({ id, text }: UpdateTodoTextRequest) =>
 
 export const updateTodoCheck = ({ id, checked }: UpdateTodoCheckedRequest) =>
   fetchTodosApi({
-    url: `/${id}/update-checked`,
+    url: `/${id}/checked`,
     method: 'PUT',
     body: { checked }
   });

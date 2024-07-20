@@ -44,7 +44,7 @@ export const useTodosMutation = () => {
     mutationFn: updateTodoText,
     onMutate: async ({ id, text }) => {
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
-      setTodo({ ...getTodo(id), description: text });
+      setTodo({ ...getTodo(id), text: text });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });

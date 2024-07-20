@@ -1,7 +1,7 @@
 export interface Todo {
   id: number;
   checked: boolean;
-  description: string;
+  text: string;
 }
 
 export interface UpdateTodoTextRequest {

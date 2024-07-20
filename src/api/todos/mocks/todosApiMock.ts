@@ -6,27 +6,27 @@ export const todos: Todo[] = [
   {
     id: 1,
     checked: false,
-    description: "Buy some water"
+    text: "Buy some water"
   },
   {
     id: 2,
     checked: true,
-    description: "Clean a bike"
+    text: "Clean a bike"
   },
   {
     id: 3,
     checked: false,
-    description: "Wax a chain"
+    text: "Wax a chain"
   },
   {
     id: 4,
     checked: false,
-    description: "Call John"
+    text: "Call John"
   },
   ...Array.from(Array(0).keys()).map(i => ({
     id: 5 + i,
     checked: false,
-    description: `Item ${i}`
+    text: `Item ${i}`
   }) satisfies Todo)
 ];
 
@@ -68,13 +68,13 @@ export const todosApiMock = {
         if (index === -1) {
           return new HttpResponse(null, { status: 500, statusText: `Todo Not Found, id: ${todoId}` });
         }
-        const newTodo: Todo = { ...todosDB[index], description: text };
+        const newTodo: Todo = { ...todosDB[index], text: text };
         todosDB = [...todosDB.slice(0, index), newTodo, ...todosDB.slice(index + 1)];
         return HttpResponse.json();
       }
     ),
     http.put( // updateChecked
-      `${TODOS_URL}/:id/update-checked`, async ({ request, params }) => {
+      `${TODOS_URL}/:id/checked`, async ({ request, params }) => {
         const { checked } = await request.json() as { checked: boolean };
 
         const todoId = parseInt(params.id as string);
