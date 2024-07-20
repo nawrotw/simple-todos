@@ -64,7 +64,7 @@ const GenericTodoListItem = <T, >(props: TodoListItemProps<T>) => {
           inputProps={{ 'aria-labelledby': labelId }}
         />
       </ListItemIcon>
-      <ListItemText id={labelId} primary={primaryText}/>
+      <ListItemText id={labelId} primary={primaryText} sx={{textDecoration: checked ? 'line-through': undefined}}/>
     </ListItemButton>
   </StyledListItem>
 };
