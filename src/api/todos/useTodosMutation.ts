@@ -12,6 +12,7 @@ export const useTodosMutation = () => {
   const addTodoMutation = useMutation({
     mutationFn: addTodo,
     onMutate: async (newTodo) => {
+      // Cancel any outgoing re-fetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ['todos'] })
       const previousTodos = queryClient.getQueryData(['todos']) as Todo[];
       queryClient.setQueryData(['todos'], (old: Todo[]) => [...old, newTodo]);
@@ -24,9 +25,8 @@ export const useTodosMutation = () => {
     onError: (_err, _newTodo, context) => {
       context && queryClient.setQueryData(['todos'], context.previousTodos)
     },
-    onSettled: () => { // Always re-fetch after error or success:
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    // Always re-fetch after error or success:
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   const deleteTodoMutation = useMutation({
@@ -35,9 +35,7 @@ export const useTodosMutation = () => {
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
       queryClient.setQueryData(['todos'], (old: Todo[]) => old.filter(todo => todo.id !== id));
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   });
 
   const updateTextMutation = useMutation({
@@ -46,21 +44,16 @@ export const useTodosMutation = () => {
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
       setTodo({ ...getTodo(id), text: text });
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   });
 
   const updateCheckedMutation = useMutation({
     mutationFn: updateTodoCheck,
     onMutate: async ({ id, checked }) => {
-      // Cancel any outgoing re-fetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
       setTodo({ ...getTodo(id), checked: checked });
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   });
 
   const clearCompletedMutate = useMutation({
@@ -72,11 +65,11 @@ export const useTodosMutation = () => {
         (old) => old?.map((todo: Todo) => ({ ...todo, checked: false }))
       );
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  });
 
-  })
+  addTodoMutation.error
+  addTodoMutation.reset
 
   return {
     addTodo: addTodoMutation.mutate,
@@ -84,5 +77,6 @@ export const useTodosMutation = () => {
     updateChecked: updateCheckedMutation.mutate,
     updateText: updateTextMutation.mutate,
     clearCompleted: clearCompletedMutate.mutate,
+    mutations: [addTodoMutation, deleteTodoMutation, updateCheckedMutation, updateTextMutation, clearCompletedMutate]
   };
 }

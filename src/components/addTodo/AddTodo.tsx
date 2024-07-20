@@ -41,8 +41,8 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
         size='small'
         sx={{ flex: 1, mr: 0 }}
         InputProps={{
-          sx: {pr: 0},
-          endAdornment: onTextClear && <InputAdornment position="start">
+          sx: { pr: 0 },
+          endAdornment: onTextClear && text.length > 0 && <InputAdornment position="start">
             <IconButton onClick={onTextClear} size='small'>
               <ClearIcon fontSize='small'/>
             </IconButton>
@@ -53,6 +53,7 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
         type="submit"
         sx={{ marginLeft: '5px', width: '20%' }}
         variant='contained'
+        disabled={text.length === 0}
       >
         {id ? 'Save' : 'Add Todo'}
       </Button>

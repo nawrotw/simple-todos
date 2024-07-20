@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useRef } from 'react'
 import './App.scss'
-import { styled, Alert } from "@mui/material";
+import { styled } from "@mui/material";
 import { AddTodo } from "./components/addTodo/AddTodo.tsx";
 import { TodoList } from "./components/todoList/TodoList.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import { useTodosMutation } from "./api/todos/useTodosMutation.ts";
 import { ActionBar, FilterType } from "./components/actionBar/ActionBar.tsx";
 import { colors } from "./styles/colors.ts";
 import { Todo } from "./api/todos/Todo.ts";
+import { ApiErrorAlert } from "./components/ApiErrorAlert.tsx";
 
 export const Root = styled('div')`
     background-color: ${({ theme }) => theme.palette.background.default};
@@ -39,13 +40,18 @@ const filterMap: Record<FilterType, (todo: Todo) => boolean> = {
 
 function App() {
 
-  const { data: todos, isPending, error } = useQuery({ queryKey: ['todos'], queryFn: () => fetchTodos() });
+  const { data: todos, isPending, error, refetch } = useQuery({ queryKey: ['todos'], queryFn: () => fetchTodos() });
 
-  const { addTodo, deleteTodo, updateChecked, updateText, clearCompleted } = useTodosMutation();
+  const { mutations, addTodo, deleteTodo, updateChecked, updateText, clearCompleted } = useTodosMutation();
 
   const inputRef = useRef<HTMLInputElement>(null);
+
   const [editId, setEditId] = useState<number>();
   const [editText, setEditText] = useState<string>("");
+  const resetEdit = () => {
+    setEditId(undefined);
+    setEditText("");
+  }
 
   const [filter, setFilter] = useState<FilterType>('none');
 
@@ -82,18 +88,12 @@ function App() {
 
   const handleSave = (id: number, text: string) => {
     updateText({ id, text });
-    setEditId(undefined);
-    setEditText("");
-  };
-
-  const handleTextClear = () => {
-    setEditId(undefined);
-    setEditText("");
+    resetEdit();
   };
 
   return (
     <Root>
-      {error && <Alert sx={{ m: -1, mb: 1, borderRadius: 0 }} variant="filled" severity="error">{error.message}</Alert>}
+      <ApiErrorAlert mutations={[...mutations, { error, reset: refetch }]}/>
       <Title>todos</Title>
       <AddTodo
         id={editId}
@@ -102,7 +102,7 @@ function App() {
         onAdd={handleAddTodo}
         onSave={handleSave}
         onTextChange={setEditText}
-        onTextClear={handleTextClear}
+        onTextClear={resetEdit}
       />
       <TodoList isPending={isPending} todos={filteredTodos} onToggle={handleToggle} onEdit={handleEdit} onDelete={handleDelete}/>
       <ActionBar itemsLeftCount={itemsLeftCount} filter={filter} onFilterChange={setFilter} onClear={clearCompleted}/>
