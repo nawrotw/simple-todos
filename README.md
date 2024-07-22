@@ -6,6 +6,7 @@
 - dark mode
         
 ### To show
+ - Cards with SSE and arch drawings
  - GitHub Actions - tests
  - mobile view
  - 0 effort dark them thank to MUI (on dev)?
@@ -71,6 +72,7 @@ A todo item has three possible interactions:
 
 2. Double-clicking input activates editing mode  
 `Normally I would discuss any changes with PO berofe implementing. Here I a bit change UX so Edit have action button similar to Delete action`
+`Why I changed it? We need to consider what is primary action/functionality and build around this. Imho checking items is primary action, edit/delete secondary`
 
 3. Hovering over the todo shows the remove button
 

@@ -14,8 +14,15 @@ export const ApiErrorAlert = ({ mutations }: ApiErrorAlertProps) => {
   return mutations
     .filter(mutation => mutation.error)
     .map((mutation) => (
-      <Alert sx={{ m: -1, mb: 1, borderRadius: 0 }} variant="filled" severity="error" onClose={() => mutation.reset?.()}>
-        {mutation.error?.message}
+      mutation.error && <Alert
+        variant="filled"
+        severity="error"
+        onClose={() => mutation.reset?.()}
+        sx={{ m: -1, mb: 1, borderRadius: 0 }}
+        data-testid='errorAlert'
+        key={mutation.error.message}
+      >
+        {mutation.error.message}
       </Alert>
     ));
 }

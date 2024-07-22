@@ -1,10 +1,12 @@
-import { render, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { render, screen, waitForElementToBeRemoved, within } from "@testing-library/react";
 import { afterAll, beforeAll, describe, expect, it, beforeEach, afterEach } from "vitest";
 import App from "./App.tsx";
 import { TestApiProvider } from "./components/TestApiProvider.tsx";
 import { setupServer } from 'msw/node'
-import { todosApiMock, resetTodosDB } from "./api/todos/mocks/todosApiMock.ts";
+import { todosApiMock, resetTodosDB, todos } from "./api/todos/mocks/todosApiMock.ts";
 import { userEvent, UserEvent } from "@testing-library/user-event";
+import { http, HttpResponse } from "msw";
+import { TODOS_URL } from "./api/todos/fetchTodos.ts";
 
 const getTodoItem = (todoId: number) => (screen.getByTestId(`todoItem-${todoId}`));
 const isTodoChecked = (todoId: number) => (getTodoItem(todoId).querySelector('input') as HTMLInputElement)?.checked;
@@ -28,7 +30,7 @@ describe("App integration suite", () => {
   beforeEach(() => {
     user = userEvent.setup();
     render(<TestApiProvider><App/></TestApiProvider>);
-  })
+  });
 
   it("should load and render todos", async () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
@@ -113,6 +115,21 @@ describe("App integration suite", () => {
       expect(screen.queryByText('Wax a chain')).not.toBeInTheDocument();
       expect(screen.queryByText('Call John')).not.toBeInTheDocument();
     });
+  });
 
+  it("should show and close error", async () => {
+    await waitTodosLoaded();
+
+    server.resetHandlers(
+      http.get(TODOS_URL, () => HttpResponse.json(todos)),
+      http.put(`${TODOS_URL}/clear-completed`, () => new HttpResponse(null, { status: 500 })),
+    )
+
+    await user.click(screen.getByText('Clear completed'));
+    expect(await screen.findByTestId('errorAlert')).toHaveTextContent('Clearing completed todos failed');
+
+    await user.click(within(screen.getByTestId('errorAlert')).getByTitle('Close'));
+
+    expect(screen.queryByTestId('errorAlert')).not.toBeInTheDocument();
   });
 });

@@ -68,5 +68,5 @@ export const clearCompleted = () =>
   fetchTodosApi({
     url: '/clear-completed',
     method: 'PUT',
-    errorMessage: `Clearing all todos completion failed`
+    errorMessage: `Clearing completed todos failed`
   });
