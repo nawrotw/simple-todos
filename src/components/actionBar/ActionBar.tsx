@@ -28,6 +28,7 @@ const Root = styled('div')`
 
 export const ItemsCounter = styled('div')`
     grid-area: counter;
+    width: 7rem;
     color: ${({ theme }) => theme.palette.text.secondary};
     padding-left: ${({ theme }) => theme.spacing(1)};
 `;

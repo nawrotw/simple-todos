@@ -30,7 +30,18 @@ export const todos: Todo[] = [
   }) satisfies Todo)
 ];
 
+const useLocalStorageDB = import.meta.env.VITE_USE_LOCAL_STORAGE_DB === 'true';
+
 let todosDB: Todo[] = [...todos];
+if(useLocalStorageDB){
+  const sTodos = localStorage.getItem('todosDB');
+  todosDB = sTodos && JSON.parse(sTodos) || [...todos];
+}
+
+const save = useLocalStorageDB ?
+  () => localStorage.setItem('todosDB', JSON.stringify(todosDB)):
+  () => void 0
+
 export const resetTodosDB = () => todosDB = [...todos];
 
 export const todosApiMock = {
@@ -44,6 +55,7 @@ export const todosApiMock = {
         const newTodo = await request.json() as Todo;
         newTodo.id = todosDB.length + 1;
         todosDB = [newTodo, ...todosDB];
+        save();
         return HttpResponse.json(newTodo);
       }
     ),
@@ -56,6 +68,7 @@ export const todosApiMock = {
           return new HttpResponse(null, { status: 500, statusText: `Todo Not Found, id: ${todoId}` });
         }
         todosDB = todosDB.filter(todo => todo.id !== todoId);
+        save();
         return HttpResponse.json();
       }
     ),
@@ -70,6 +83,7 @@ export const todosApiMock = {
         }
         const newTodo: Todo = { ...todosDB[index], text: text };
         todosDB = [...todosDB.slice(0, index), newTodo, ...todosDB.slice(index + 1)];
+        save();
         return HttpResponse.json();
       }
     ),
@@ -84,6 +98,7 @@ export const todosApiMock = {
         }
         const newTodo = { ...todosDB[index], checked: checked };
         todosDB = [...todosDB.slice(0, index), newTodo, ...todosDB.slice(index + 1)];
+        save();
         return HttpResponse.json();
       }
     ),
@@ -91,6 +106,7 @@ export const todosApiMock = {
       `${TODOS_URL}/clear-completed`,
       () => {
         todosDB = todosDB.map(todo => ({ ...todo, checked: false }));
+        save();
         return HttpResponse.json();
       }
     ),
