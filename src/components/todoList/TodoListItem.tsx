@@ -4,6 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export const StyledListItem = styled(ListItem)`
+    color: ${({theme}) => theme.palette.text.primary};
     .MuiListItemSecondaryAction-root {
         opacity: 0;
         transition: opacity 0.1s ease-out;

@@ -1,6 +1,40 @@
-# React + TypeScript + Vite
+# ✅  Simple Todo List Application
 
-# ✅  Create a Simple Todo List Application
+
+### What can be added:
+- search
+- dark mode
+        
+### To show
+ - GitHub Actions - tests
+ - mobile view
+ - 0 effort dark them thank to MUI (on dev)?
+
+## Rest Api reasoning
+ - shared list for multiple users updates
+   - atomic update endpoints (PUT:/checked, PUT:/text)
+     - lowering risk of optimistic update fail
+   - (to implement) event architecture (SSE, WS) for live data update
+     - better ux - list is always up-to-date
+     - lowering risk for rewrite changes done already by someone else
+
+## Extra
+
+1. Since its such an enjoyable experience to have a todo list, think how would you share it with your friends - so all of you can update it at the same time.
+   
+   - create a User + auth
+   - create shareable lists, so a User can share list with others
+   - event base list updates
+
+2. Your friends like the todo list a lot! Everyone shared it with their friends. Now your application is bottlenecking.
+   Also, everyone edits at the same time just once a day for an hour. How would you accommodate your users?
+
+   - write Node.js backend and deploy it in serverless environment e.g. in Vercel Edge :-)
+       - so the lambdas are created as traffic comes and are destroyed when ends (unused lambda life span 10-60sec ) 
+         - we can throw as many user as we want
+         - and we pay only for served requests :-)
+   - but in Java context... this is whole different story with monitoring traffic, spawning new servers and load balancing, not mentioning the DB stuff... to discuss...
+
 
 ![](todo.png)
 
@@ -35,7 +69,8 @@ A todo item has three possible interactions:
 
 1. Clicking the checkbox marks the todo as complete
 
-2. Double-clicking input activates editing mode  // discuss this
+2. Double-clicking input activates editing mode  
+`Normally I would discuss any changes with PO berofe implementing. Here I a bit change UX so Edit have action button similar to Delete action`
 
 3. Hovering over the todo shows the remove button
 
@@ -46,9 +81,3 @@ Displays the number of active todos
 ## Submissions
 
 When you are finished, push your commits to the remote.
-
-## Extra
-
-1. Since its such an enjoyable experience to have a todo list, think how would you share it with your friends - so all of you can update it at the same time.
-
-2. Your friends like the todo list a lot! Everyone shared it with their friends. Now your application is bottlenecking. Also, everyone edits at the same time just once a day for an hour. How would you accommodate your users?

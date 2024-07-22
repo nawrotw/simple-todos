@@ -71,7 +71,9 @@ function App() {
   }
 
   // This is one of the essential piece to have stable reference to toggle function, so ListItem memo will work
-  // There are many different ways to handle this ListItem rendering issue.
+  // There are many different ways to handle memoized ListItem rendering issue.
+  // This solution works here, but e.g. if I would create library ListComponent, so any 1 can use it I would use different approach,
+  // so the best solution depends on circumstances :-)
   const handleToggle = useCallback((todoId: number, checked: boolean) => {
     updateChecked({ id: todoId, checked: !checked });
   }, [updateChecked]);
