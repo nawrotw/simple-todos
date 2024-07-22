@@ -84,6 +84,7 @@ function App() {
 
   const handleDelete = useCallback((todoId: number) => {
     deleteTodo(todoId);
+    resetEdit();
   }, [deleteTodo]);
 
   const handleSave = (id: number, text: string) => {

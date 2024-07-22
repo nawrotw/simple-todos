@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTodoCheck, clearCompleted as clearCompletedFn, addTodo, updateTodoText, deleteTodo } from "./fetchTodos.ts";
 import { Todo } from "./Todo.ts";
-import { getTodoFromCache, setTodoCache } from "../../utils/reactQueryUtils.ts";
+import { getTodoFromCache, updateCacheTodo } from "../../utils/reactQueryUtils.ts";
 
 export const useTodosMutation = () => {
   const queryClient = useQueryClient();
 
   const getTodo = (id: number) => getTodoFromCache(queryClient, id);
-  const setTodo = (todo: Todo) => setTodoCache(queryClient, todo);
+  const updateTodo = (todo: Todo) => updateCacheTodo(queryClient, todo);
 
   const addTodoMutation = useMutation({
     mutationFn: addTodo,
@@ -23,7 +23,7 @@ export const useTodosMutation = () => {
     // If the mutation fails,
     // use the context returned from onMutate to roll back
     onError: (_err, _newTodo, context) => {
-      context && queryClient.setQueryData(['todos'], context.previousTodos)
+      context && queryClient.setQueryData(['todos'], context.previousTodos);
     },
     // Always re-fetch after error or success:
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
@@ -42,7 +42,7 @@ export const useTodosMutation = () => {
     mutationFn: updateTodoText,
     onMutate: async ({ id, text }) => {
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
-      setTodo({ ...getTodo(id), text: text });
+      updateTodo({ ...getTodo(id), text: text });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   });
@@ -51,9 +51,15 @@ export const useTodosMutation = () => {
     mutationFn: updateTodoCheck,
     onMutate: async ({ id, checked }) => {
       await queryClient.cancelQueries({ queryKey: ['todos', id] });
-      setTodo({ ...getTodo(id), checked: checked });
+      const prevTodo = getTodo(id);
+      updateTodo({ ...prevTodo, checked: checked });
+      return { prevTodo }
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+    onError: (_err, _newTodo, context) => {
+      context && updateTodo(context.prevTodo);
+    },
+    // do not re-fetch to preserve items order
+    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   });
 
   const clearCompletedMutate = useMutation({
@@ -67,9 +73,6 @@ export const useTodosMutation = () => {
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   });
-
-  addTodoMutation.error
-  addTodoMutation.reset
 
   return {
     addTodo: addTodoMutation.mutate,

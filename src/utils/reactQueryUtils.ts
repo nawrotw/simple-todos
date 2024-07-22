@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Todo } from "../api/todos/Todo.ts";
 
-export const setTodoCache = (queryClient: QueryClient, todo: Todo) => {
+export const updateCacheTodo = (queryClient: QueryClient, todo: Todo) => {
   queryClient.setQueryData<Todo[]>(['todos'], (old) => {
     if (!old) throw new Error(`Todos list is undefined. Should not happen`);
     const index = old?.findIndex(({id}) => id === todo.id);
