@@ -29,7 +29,7 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
   }
 
   return <div>
-    <Form onSubmit={handleSubmit} sx={{ width: "100%" }}>
+    <Form onSubmit={handleSubmit}>
       <TextField
         inputRef={ref}
         id="newTodo"
@@ -41,7 +41,7 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
         size='small'
         sx={{ flex: 1, mr: 0 }}
         InputProps={{
-          sx: { pr: 0 },
+          sx: { pr: 0 },  
           endAdornment: onTextClear && text.length > 0 && <InputAdornment position="start">
             <IconButton onClick={onTextClear} size='small'>
               <ClearIcon fontSize='small'/>
@@ -51,7 +51,7 @@ export const AddTodo = forwardRef<HTMLInputElement, AddTodoProps>((props: AddTod
       />
       <Button
         type="submit"
-        sx={{ marginLeft: '5px', width: '20%' }}
+        sx={{ ml: (theme) => theme.spacing(1), width: '6rem', whiteSpace: 'nowrap' }}
         variant='contained'
         disabled={text.length === 0}
       >

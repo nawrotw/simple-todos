@@ -1,15 +1,47 @@
 import { styled, Button, lighten } from "@mui/material";
 import { colors } from "../../styles/colors.ts";
 
-export const Root = styled('div')`
-    padding: 8px;
-    display: flex;
+const Root = styled('div')`
+    padding: ${({ theme }) => theme.spacing(2, 0, 1)};
+
+    display: grid;
     align-items: center;
+
+    grid-gap: ${({ theme }) => theme.spacing(1)};
+    grid-template-columns: auto auto;
+    grid-template-areas: 
+      "filters filters"
+      "counter clearBtn";
+
+    @media (min-width: 400px) {
+        grid-template-columns: auto 1fr;
+        grid-template-areas: 
+      "counter filters"
+      "clearBtn filters";
+    }
+    @media (min-width: 520px) {
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas: "counter filters clearBtn";
+    }
 `;
 
-export const LeftContainer = styled('div')`
-    flex: 1;
+
+export const ItemsCounter = styled('div')`
+    grid-area: counter;
     color: ${({ theme }) => theme.palette.text.secondary};
+    padding-left: ${({ theme }) => theme.spacing(1)};
+`;
+
+export const Filters = styled('div')`
+    grid-area: filters;
+    display: flex;
+    justify-content: center;
+    gap: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+export const ClearButton = styled(Button)`
+    grid-area: clearBtn;
+    white-space: nowrap;
 `;
 
 export const FilterButton = styled(Button,
@@ -20,16 +52,6 @@ export const FilterButton = styled(Button,
     outline: ${({ isSelected }) => isSelected ? `2px solid ${lighten(colors.orange, 0.6)}` : undefined};
 `;
 
-export const MiddleContainer = styled('div')`
-    display: flex;
-    gap: 3px;
-`;
-
-export const RightContainer = styled('div')`
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-`;
 
 const getItemsLeftText = (count: number) => {
   switch (count) {
@@ -59,14 +81,12 @@ export const ActionBar = (props: ActionBarProps) => {
   }
 
   return <Root>
-    <LeftContainer data-testid='leftItemsCount'>{getItemsLeftText(itemsLeftCount)}</LeftContainer>
-    <MiddleContainer>
+    <ItemsCounter data-testid='leftItemsCount'>{getItemsLeftText(itemsLeftCount)}</ItemsCounter>
+    <Filters>
       <FilterButton isSelected={filter === 'none'} onClick={handleFilterChange('none')}>All</FilterButton>
       <FilterButton isSelected={filter === 'active'} onClick={handleFilterChange('active')}>Active</FilterButton>
       <FilterButton isSelected={filter === 'completed'} onClick={handleFilterChange('completed')}>Completed</FilterButton>
-    </MiddleContainer>
-    <RightContainer>
-      <Button onClick={onClear}>Clear completed</Button>
-    </RightContainer>
+    </Filters>
+    <ClearButton variant='outlined' onClick={onClear}>Clear completed</ClearButton>
   </Root>
 }
