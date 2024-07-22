@@ -2,8 +2,9 @@
 
 
 ### What can be added:
-- search
+- search - but this would require design changes (add/edit)
 - dark mode
+- flyway
         
 ### To show
  - Cards with SSE and arch drawings
